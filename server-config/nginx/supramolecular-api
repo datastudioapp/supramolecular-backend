@@ -1,0 +1,37 @@
+upstream supramolecular_server {
+  # fail_timeout=0 means we always retry an upstream even if it failed
+  # to return a good HTTP response (in case the Unicorn master nukes a
+  # single worker for timing out).
+
+  server unix:/webapps/supramolecular/run/gunicorn.sock fail_timeout=0;
+}
+
+server {
+    listen 80;
+
+    client_max_body_size 4G;
+
+    access_log /webapps/supramolecular/logs/nginx-api-access.log;
+    error_log  /webapps/supramolecular/logs/nginx-api-error.log;
+
+    server_name api.supramolecular.org api.supramolecular.echus.co;
+
+    location /static/ {
+        alias /var/www/supramolecular/static/;
+    }
+    
+    location /media/ {
+        alias /var/www/supramolecular/media/;
+    }
+
+    location / {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect   off;
+
+        proxy_connect_timeout 300s;
+        proxy_read_timeout    900s;
+
+        proxy_pass http://supramolecular_server;
+    }
+}

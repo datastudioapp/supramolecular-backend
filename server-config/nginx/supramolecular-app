@@ -1,0 +1,39 @@
+server {
+    listen   80;
+
+    client_max_body_size 4G;
+
+    access_log /webapps/supramolecular/logs/nginx-app-access.log;
+    error_log /webapps/supramolecular/logs/nginx-app-error.log;
+
+    server_name app.supramolecular.org app.supramolecular.echus.co;
+
+    root /var/www/bindfit_client/;
+    index index.html;
+
+    location /bindsim {
+        alias /var/www/bindsim_client/;
+    }
+
+    location /ic50sim {
+        alias /var/www/ic50_sim_client/;
+    }
+
+    location /bindsim/static {
+        alias /var/www/bindsim_client/static/;
+    }
+
+    location /bindsim/media {
+        alias /var/www/bindsim_client/media/;
+    }
+
+    location / { 
+        try_files $uri $uri/ /index.html?/$request_uri;
+    }
+ 
+    # Error pages
+    # error_page 500 502 503 504 /500.html;
+    # location = /500.html {
+    #     root /webapps/supramolecular/static/;
+    # }
+}
