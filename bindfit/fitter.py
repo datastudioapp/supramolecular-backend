@@ -21,6 +21,12 @@ logger = logging.getLogger('supramolecular')
 
 class Fitter():
     def __init__(self, xdata, ydata, function, normalise=True, params=None):
+        logger.debug("Fitter.__init__: called")
+        logger.debug("Fitter.__init__: xdata")
+        logger.debug(xdata)
+        logger.debug("Fitter.__init__: ydata")
+        logger.debug(ydata)
+
         self.xdata = xdata # Original input data, no processing applied
         self.ydata = ydata # Original input data, no processing applied
         self.function = function

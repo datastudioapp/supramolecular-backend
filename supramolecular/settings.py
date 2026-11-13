@@ -16,7 +16,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Root site URL
-ROOT_URL = "http://api.supramolecular.org"
+ROOT_URL = "https://api.supramolecular.org"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -43,11 +43,13 @@ INSTALLED_APPS = (
     'rest_framework',
     'corsheaders',
     'haystack',
+    'django_statsd',
     'bindsim',
     'bindfit',
 )
 
 MIDDLEWARE_CLASSES = (
+    'django_statsd.middleware.StatsdMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,6 +60,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'supramolecular.disable.DisableCSRF',
+    'django_statsd.middleware.StatsdMiddlewareTimer',
 )
 
 ROOT_URLCONF = 'supramolecular.urls'

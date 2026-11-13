@@ -708,7 +708,33 @@ class FitExportView(APIView):
                 dtype=dt)
         fit_molefrac   = np.array(fit["fit"]["molefrac"],   dtype=dt).T
         fit_coeffs_raw = np.array(fit["fit"]["coeffs_raw"], dtype=dt).T
-        fit_coeffs     = np.array(fit["fit"]["coeffs"],     dtype=dt).T
+
+        # Transposing here causes error in 1:1 export, unsure why
+        # Needs to be transposed for 1:2 and above
+        # TODO Fix this in a less bad way
+
+        fit_coeffs     = np.array(fit["fit"]["coeffs"],     dtype=dt)
+
+        if not len(fit["fit"]["coeffs"]) == 1:
+            fit_coeffs     = np.array(fit["fit"]["coeffs"],     dtype=dt).T
+
+        logger.debug("BEFORE TRANSPOSE")
+        logger.debug(fit["fit"]["coeffs"])
+        # fit_coeffs     = np.array(fit["fit"]["coeffs"],     dtype=dt).T
+        logger.debug("AFTER TRANSPOSE")
+        logger.debug(fit_coeffs)
+
+        #if options_fitter == "nmr1to1" or options_fitter == "uv1to1":
+        #    logger.debug("--- not doing a transpose ---")
+        #    fit_coeffs     = np.array(fit["fit"]["coeffs"],     dtype=dt)
+        #else:
+        #    logger.debug("--- doing muh transpose ---")
+        #    fit_coeffs     = np.array(fit["fit"]["coeffs"],     dtype=dt).T
+
+        # TODO 
+        # what we shoudl really be doing is checking shape of resulting numpy array
+        # and *then* doing a transpose
+
         fit_n_y        = fit["fit"]["n_y"]
         fit_n_params   = fit["fit"]["n_params"]
         # PLACEHOLDER  deal with multi-D y inputs here later
@@ -814,14 +840,27 @@ class FitExportView(APIView):
                                      join_axes=[qof_output_1.columns])
         params_output_1  = pd.DataFrame(params_array_1,  columns=params_names_1)
         params_output_1a = pd.DataFrame(params_array_1a, columns=params_names_1a)
+
+        # Debug params_array_2
+        logger.debug("--- Params array 2 ---")
+        logger.debug(params_array_2)
+        logger.debug(params_array_2.shape)
+        logger.debug(params_names_2)
+        logger.debug("--- end params array 2 ---")
+
+        logger.debug("--- 0 ---")
         params_output_2  = pd.DataFrame(params_array_2,  columns=params_names_2)
+
+        logger.debug("--- 1 ---")
         params_output_3  = pd.DataFrame(params_array_3,  columns=params_names_3)
+        logger.debug("--- 2 ---")
         params_output    = pd.concat([params_output_1,
                                      params_output_1a,
                                      params_output_2,
                                      params_output_3],
                                      axis=1,
                                      join_axes=[params_output_2.index])
+        logger.debug("--- 3 ---")
 
         # Create export file
         # Randomly generate export filename
