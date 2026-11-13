@@ -440,11 +440,6 @@ class FitSaveView(APIView):
             logger.debug("FitSaveView: Retrieved saved fit edit key")
             logger.debug(fit_entry_edit_key)
 
-            # TODO TEMP
-            # Backdoor for testing
-            if fit_edit_key == "hunter2":
-                fit_entry_edit_key = "hunter2"
-
             # Check edit key matches retrieved fit entry's edit key
             if fit_entry_edit_key is not None and fit_edit_key == fit_entry_edit_key:
                 logger.debug("FitSaveView: Edit keys match, updating fit")
