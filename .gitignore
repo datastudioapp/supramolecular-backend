@@ -59,3 +59,8 @@ target/
 
 # Whoosh
 whoosh_index/
+
+# Local development files
+.DS_Store
+.direnv/
+.env
